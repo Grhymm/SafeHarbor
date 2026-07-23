@@ -10,6 +10,24 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-sh-bg: #0b0d0f;
+  --color-sh-panel: #14171a;
+  --color-sh-panel-line: #262a2e;
+  --color-sh-amber: #e8b339;
+  --color-sh-amber-ink: #241a02;
+  --color-sh-ink: #e8e6df;
+  --color-sh-ink-dim: #9a988f;
+  --color-sh-bar: #050607;
+  --color-sh-error-bg: #2a1414;
+  --color-sh-error-ink: #f0a3a3;
+  --color-sh-ok-bg: #14241a;
+  --color-sh-ok-ink: #8fd6a8;
+  --color-sh-info-bg: #131e2a;
+  --color-sh-info-ink: #86b8e0;
+
+  --font-plex-mono: var(--font-ibm-plex-mono);
+  --font-plex-sans: var(--font-ibm-plex-sans);
 }
 
 @media (prefers-color-scheme: dark) {
