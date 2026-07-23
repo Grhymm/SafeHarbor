@@ -27,6 +27,10 @@
   --color-sh-info-bg: #131e2a;
   --color-sh-info-ink: #86b8e0;
 
+  --color-sh-amber-glow: rgba(232, 179, 57, 0.35);
+  --color-sh-glass: rgba(20, 23, 26, 0.55);
+  --color-sh-glass-line: rgba(255, 255, 255, 0.08);
+
   --font-plex-mono: var(--font-ibm-plex-mono);
   --font-plex-sans: var(--font-ibm-plex-sans);
 }
@@ -42,4 +46,82 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes revealBar {
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes pulseDot {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 var(--color-sh-amber-glow);
+  }
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 0 4px transparent;
+  }
+}
+@keyframes scanSweep {
+  0% {
+    top: -60px;
+  }
+  50% {
+    top: 100%;
+  }
+  100% {
+    top: -60px;
+  }
+}
+@keyframes fadeUpHero {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer components {
+  .sh-glass {
+    background: var(--color-sh-glass);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid var(--color-sh-glass-line);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 20px 40px -24px rgba(0, 0, 0, 0.5);
+    transition:
+      transform 0.25s ease,
+      border-color 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+  .sh-glass:hover {
+    border-color: color-mix(in srgb, var(--color-sh-amber) 28%, transparent);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 24px 48px -20px rgba(0, 0, 0, 0.55),
+      0 0 0 1px color-mix(in srgb, var(--color-sh-amber) 8%, transparent);
+  }
+}
+
+/* Accessibilité : neutralise toutes les animations/transitions du site,
+   pas seulement celles de la page d'accueil. */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }
