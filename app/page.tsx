@@ -2,6 +2,10 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { SiteHeader } from "@/components/SiteHeader";
+import { CHECKOUT_PACKAGES, CUSTOM_PACKAGE, formatUsd } from "@/lib/packages";
+
+const MIN_PRICE = formatUsd(Math.min(...CHECKOUT_PACKAGES.map((p) => p.priceCents)));
+const MAX_PRICE = formatUsd(Math.max(...CHECKOUT_PACKAGES.map((p) => p.priceCents)));
 
 const REDACTION_ROWS = [
   [
@@ -151,8 +155,8 @@ export default function Home() {
             <strong className="block text-sh-ink text-[15px] font-semibold mb-1">
               Prix fixe, annoncé d&apos;avance
             </strong>
-            590€ ou 1590€ selon le périmètre. Pas de devis à négocier, pas de surprise à la
-            facture.
+            De {MIN_PRICE} à {MAX_PRICE} selon le périmètre. Pas de devis à négocier, pas de
+            surprise à la facture.
           </div>
           <div className="text-[13px] text-sh-ink-dim">
             <strong className="block text-sh-ink text-[15px] font-semibold mb-1">
@@ -210,50 +214,50 @@ export default function Home() {
             Tarifs
           </Reveal>
           <Reveal delayIndex={8} className="text-[30px] font-bold tracking-[-0.01em] mb-4">
-            <h2>Deux formats, un prix qui ne bouge pas</h2>
+            <h2>Quatre formats, un prix qui ne bouge pas</h2>
           </Reveal>
           <Reveal delayIndex={9} className="text-sh-ink-dim text-[15px] max-w-[56ch] mb-12">
-            Au-delà de ces deux packages, un devis sur mesure reste possible pour les périmètres
-            plus complexes.
+            Trois formats à prix fixe pour les besoins courants, plus un format sur mesure pour
+            les périmètres plus complexes.
           </Reveal>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <Reveal delayIndex={10} className="sh-glass rounded-[3px] p-7">
-              <p className="font-plex-mono text-[11px] tracking-[0.1em] uppercase text-sh-ink-dim mb-2">
-                Package — Essentiel
+            {CHECKOUT_PACKAGES.map((pkg, i) => (
+              <Reveal key={pkg.code} delayIndex={10 + i} className="sh-glass rounded-[3px] p-7">
+                <p className="font-plex-mono text-[11px] tracking-[0.1em] uppercase text-sh-ink-dim mb-2">
+                  {pkg.eyebrow}
+                </p>
+                <div className="text-lg font-semibold mb-2">{pkg.name}</div>
+                <p className="text-sh-ink-dim text-[13px] mb-5">{pkg.scope}.</p>
+                <div className="font-plex-mono text-[28px] font-semibold text-sh-amber mb-1">
+                  {formatUsd(pkg.priceCents)}
+                </div>
+                <p className="text-sh-ink-dim text-[13px] mb-5.5">{pkg.delivery}</p>
+                <Link
+                  href="/commander"
+                  className="inline-flex items-center gap-1 font-plex-mono text-xs tracking-[0.05em] uppercase text-sh-ink border-b border-sh-amber pb-0.5 transition-colors duration-200 hover:text-sh-amber"
+                >
+                  Commander <ArrowRight size={14} />
+                </Link>
+              </Reveal>
+            ))}
+            <Reveal
+              delayIndex={10 + CHECKOUT_PACKAGES.length}
+              className="sh-glass rounded-[3px] border-2 border-sh-amber p-7"
+            >
+              <p className="font-plex-mono text-[11px] tracking-[0.1em] uppercase text-sh-amber mb-2">
+                {CUSTOM_PACKAGE.eyebrow}
               </p>
-              <div className="text-lg font-semibold mb-2">Audit Essentiel</div>
-              <p className="text-sh-ink-dim text-[13px] mb-5">
-                Site vitrine / petite boutique — surface publique + authentification simple.
-              </p>
+              <div className="text-lg font-semibold mb-2">{CUSTOM_PACKAGE.name}</div>
+              <p className="text-sh-ink-dim text-[13px] mb-5">{CUSTOM_PACKAGE.scope}</p>
               <div className="font-plex-mono text-[28px] font-semibold text-sh-amber mb-1">
-                590 €
+                À partir de {formatUsd(CUSTOM_PACKAGE.startingPriceCents)}
               </div>
-              <p className="text-sh-ink-dim text-[13px] mb-5.5">Livré sous 72h</p>
+              <p className="text-sh-ink-dim text-[13px] mb-5.5">Devis personnalisé</p>
               <Link
-                href="/commander"
+                href="/contact"
                 className="inline-flex items-center gap-1 font-plex-mono text-xs tracking-[0.05em] uppercase text-sh-ink border-b border-sh-amber pb-0.5 transition-colors duration-200 hover:text-sh-amber"
               >
-                Commander <ArrowRight size={14} />
-              </Link>
-            </Reveal>
-            <Reveal delayIndex={11} className="sh-glass rounded-[3px] p-7">
-              <p className="font-plex-mono text-[11px] tracking-[0.1em] uppercase text-sh-ink-dim mb-2">
-                Package — Complet
-              </p>
-              <div className="text-lg font-semibold mb-2">Audit Complet</div>
-              <p className="text-sh-ink-dim text-[13px] mb-5">
-                E-commerce / espace membre — parcours authentifié, paiement en boîte noire,
-                back-office.
-              </p>
-              <div className="font-plex-mono text-[28px] font-semibold text-sh-amber mb-1">
-                1 590 €
-              </div>
-              <p className="text-sh-ink-dim text-[13px] mb-5.5">Livré sous 5 jours ouvrés</p>
-              <Link
-                href="/commander"
-                className="inline-flex items-center gap-1 font-plex-mono text-xs tracking-[0.05em] uppercase text-sh-ink border-b border-sh-amber pb-0.5 transition-colors duration-200 hover:text-sh-amber"
-              >
-                Commander <ArrowRight size={14} />
+                Nous contacter <ArrowRight size={14} />
               </Link>
             </Reveal>
           </div>
@@ -263,7 +267,7 @@ export default function Home() {
       <div className="relative z-[1] max-w-[1080px] mx-auto px-6">
         <section className="pb-22">
           <Reveal
-            delayIndex={12}
+            delayIndex={11 + CHECKOUT_PACKAGES.length}
             className="sh-glass rounded-[3px] p-11 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8"
           >
             <div>

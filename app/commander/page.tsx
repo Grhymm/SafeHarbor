@@ -7,36 +7,9 @@ import { initializePaddle, type Paddle, type Environments } from "@paddle/paddle
 import { supabase } from "@/lib/supabase/client";
 import { RedactionBars } from "@/components/RedactionBars";
 import { SiteHeader } from "@/components/SiteHeader";
+import { CHECKOUT_PACKAGES, CUSTOM_PACKAGE, formatUsd, type PackageCode } from "@/lib/packages";
 
 type Msg = { type: "error" | "ok"; text: ReactNode } | null;
-
-type PackageCode = "audit_essentiel" | "audit_complet";
-
-const PACKAGES: {
-  code: PackageCode;
-  eyebrow: string;
-  name: string;
-  scope: string;
-  price: string;
-  delivery: string;
-}[] = [
-  {
-    code: "audit_essentiel",
-    eyebrow: "Package — Essentiel",
-    name: "Audit Essentiel",
-    scope: "Site vitrine / petite boutique — surface publique + authentification simple",
-    price: "590 €",
-    delivery: "Livré sous 72h",
-  },
-  {
-    code: "audit_complet",
-    eyebrow: "Package — Complet",
-    name: "Audit Complet",
-    scope: "E-commerce / espace membre — parcours authentifié, paiement en boîte noire, back-office",
-    price: "1 590 €",
-    delivery: "Livré sous 5 jours ouvrés",
-  },
-];
 
 function MessageBox({ msg }: { msg: Msg }) {
   if (!msg) return null;
@@ -56,7 +29,7 @@ function PackageCard({
   isOrdering,
   onOrder,
 }: {
-  pkg: (typeof PACKAGES)[number];
+  pkg: (typeof CHECKOUT_PACKAGES)[number];
   isOrdering: boolean;
   onOrder: (code: PackageCode, url: string, environment: string) => void;
 }) {
@@ -65,13 +38,15 @@ function PackageCard({
   const [cguAccepted, setCguAccepted] = useState(false);
 
   return (
-    <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-7 mb-5">
+    <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-7">
       <p className="font-plex-mono text-[11px] tracking-[0.1em] uppercase text-sh-ink-dim mb-1.5">
         {pkg.eyebrow}
       </p>
       <div className="text-lg font-semibold mb-1.5">{pkg.name}</div>
       <div className="text-sh-ink-dim text-[13px] mb-4">{pkg.scope}</div>
-      <div className="font-plex-mono text-2xl font-semibold text-sh-amber mb-1">{pkg.price}</div>
+      <div className="font-plex-mono text-2xl font-semibold text-sh-amber mb-1">
+        {formatUsd(pkg.priceCents)}
+      </div>
       <div className="text-sh-ink-dim text-[13px] mb-5">{pkg.delivery}</div>
 
       <label className="block font-plex-mono text-[11px] tracking-[0.08em] uppercase text-sh-ink-dim mb-2">
@@ -119,6 +94,28 @@ function PackageCard({
       >
         {isOrdering ? "Préparation du paiement…" : `Commander l'${pkg.name}`}
       </button>
+    </div>
+  );
+}
+
+function CustomPackageCard() {
+  return (
+    <div className="bg-sh-panel border-2 border-sh-amber rounded-[3px] p-7">
+      <p className="font-plex-mono text-[11px] tracking-[0.1em] uppercase text-sh-amber mb-1.5">
+        {CUSTOM_PACKAGE.eyebrow}
+      </p>
+      <div className="text-lg font-semibold mb-1.5">{CUSTOM_PACKAGE.name}</div>
+      <div className="text-sh-ink-dim text-[13px] mb-4">{CUSTOM_PACKAGE.scope}</div>
+      <div className="font-plex-mono text-2xl font-semibold text-sh-amber mb-1">
+        À partir de {formatUsd(CUSTOM_PACKAGE.startingPriceCents)}
+      </div>
+      <div className="text-sh-ink-dim text-[13px] mb-5">Devis personnalisé</div>
+      <Link
+        href="/contact"
+        className="inline-block bg-sh-amber text-sh-amber-ink border-none rounded-[3px] px-4.5 py-3 font-plex-mono text-[13px] font-semibold tracking-[0.05em] uppercase"
+      >
+        Nous contacter
+      </Link>
     </div>
   );
 }
@@ -247,7 +244,7 @@ export default function CommanderPage() {
   return (
     <div className="bg-sh-bg text-sh-ink font-plex-sans min-h-screen">
       <SiteHeader />
-      <div className="max-w-[640px] mx-auto px-5 pt-14 pb-24">
+      <div className="max-w-[880px] mx-auto px-5 pt-14 pb-24">
         <h2 className="sr-only">Formulaire de commande d&apos;un audit de sécurité</h2>
 
         <RedactionBars />
@@ -262,7 +259,7 @@ export default function CommanderPage() {
         </p>
 
         {!isAuthenticated && (
-          <section className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-7 mb-5">
+          <section className="max-w-[480px] bg-sh-panel border border-sh-panel-line rounded-[3px] p-7 mb-5">
             <label className="block font-plex-mono text-[11px] tracking-[0.08em] uppercase text-sh-ink-dim mb-2">
               Adresse e-mail
             </label>
@@ -289,14 +286,17 @@ export default function CommanderPage() {
           <div>
             <MessageBox msg={orderMsg} />
 
-            {PACKAGES.map((pkg) => (
-              <PackageCard
-                key={pkg.code}
-                pkg={pkg}
-                isOrdering={orderingCode === pkg.code}
-                onOrder={handleOrder}
-              />
-            ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {CHECKOUT_PACKAGES.map((pkg) => (
+                <PackageCard
+                  key={pkg.code}
+                  pkg={pkg}
+                  isOrdering={orderingCode === pkg.code}
+                  onOrder={handleOrder}
+                />
+              ))}
+              <CustomPackageCard />
+            </div>
           </div>
         )}
       </div>
