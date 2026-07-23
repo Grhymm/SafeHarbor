@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { RedactionBars } from "@/components/RedactionBars";
 
 type Msg = { type: "error" | "ok"; text: string } | null;
@@ -210,6 +211,13 @@ export default function CandidaturePage() {
             <p className="text-sh-ink-dim text-sm max-w-[42ch] mx-auto">
               Ta candidature est enregistrée. Un membre de l&apos;équipe examine ton profil et passe ton
               compte en statut vérifié avant toute assignation de mission.
+            </p>
+            <p className="text-sh-ink-dim text-sm max-w-[42ch] mx-auto mt-4">
+              Une fois ton profil validé, connecte-toi sur{" "}
+              <Link href="/testeur/connexion" className="text-sh-amber">
+                /testeur/connexion
+              </Link>{" "}
+              pour voir tes missions.
             </p>
           </div>
         )}

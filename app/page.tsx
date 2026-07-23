@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
+import { SiteHeader } from "@/components/SiteHeader";
 
 const REDACTION_ROWS = [
   [
@@ -47,20 +48,8 @@ export default function Home() {
         style={{ top: "1900px", right: "-180px", width: "480px", height: "480px", background: GLOW_GRADIENT }}
       />
 
-      <div className="relative z-[1] max-w-[1080px] mx-auto px-6">
-        <nav className="flex justify-between items-center py-5.5 border-b border-sh-panel-line">
-          <div className="font-plex-mono text-[15px] font-semibold tracking-[0.02em]">
-            SAFE<span className="text-sh-amber">HARBOR</span>
-          </div>
-          <div className="flex gap-7 text-sm text-sh-ink-dim">
-            <Link href="/commander" className="transition-colors duration-200 hover:text-sh-ink">
-              Commander un audit
-            </Link>
-            <Link href="/candidature" className="transition-colors duration-200 hover:text-sh-ink">
-              Devenir testeur
-            </Link>
-          </div>
-        </nav>
+      <div className="relative z-[1]">
+        <SiteHeader />
       </div>
 
       <div className="relative z-[1] max-w-[1080px] mx-auto px-6">

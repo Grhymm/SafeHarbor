@@ -6,6 +6,7 @@ import type { RealtimeChannel } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase/client";
 import { useProtectedSession } from "@/lib/useProtectedSession";
 import { RedactionBars } from "@/components/RedactionBars";
+import { SiteHeader } from "@/components/SiteHeader";
 import { StatusBadge, type MissionStatus } from "@/components/StatusBadge";
 
 type Mission = {
@@ -172,11 +173,16 @@ export default function MesMissionsPage() {
   }, [session]);
 
   if (checkingSession) {
-    return <div className="bg-sh-bg min-h-screen" />;
+    return (
+      <div className="bg-sh-bg min-h-screen">
+        <SiteHeader />
+      </div>
+    );
   }
 
   return (
     <div className="bg-sh-bg text-sh-ink font-plex-sans min-h-screen">
+      <SiteHeader />
       <div className="max-w-[640px] mx-auto px-5 pt-14 pb-24">
         <RedactionBars />
         <p className="font-plex-mono text-xs tracking-[0.14em] text-sh-amber uppercase mb-2.5">
@@ -186,16 +192,6 @@ export default function MesMissionsPage() {
         <p className="text-sh-ink-dim text-[15px] max-w-[52ch] mb-8">
           Suivi de tes audits de sécurité commandés.
         </p>
-
-        <div className="flex justify-between items-center mb-6 font-plex-mono text-xs text-sh-ink-dim">
-          <span>Connecté : {session?.user.email}</span>
-          <button
-            onClick={() => supabase.auth.signOut()}
-            className="bg-transparent text-sh-ink-dim border border-sh-panel-line rounded-[3px] px-3.5 py-2 text-[13px] cursor-pointer"
-          >
-            Se déconnecter
-          </button>
-        </div>
 
         {errorMsg && (
           <div className="bg-sh-error-bg text-sh-error-ink rounded-[3px] px-3.5 py-3 text-[13px] mb-5">

@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import Link from "next/link";
 import type { Session } from "@supabase/supabase-js";
 import { initializePaddle, type Paddle, type Environments } from "@paddle/paddle-js";
 import { supabase } from "@/lib/supabase/client";
 import { RedactionBars } from "@/components/RedactionBars";
+import { SiteHeader } from "@/components/SiteHeader";
 
-type Msg = { type: "error" | "ok"; text: string } | null;
+type Msg = { type: "error" | "ok"; text: ReactNode } | null;
 
 type PackageCode = "audit_essentiel" | "audit_complet";
 
@@ -155,7 +157,15 @@ export default function CommanderPage() {
         if (event.name === "checkout.completed") {
           setOrderMsg({
             type: "ok",
-            text: "Paiement reçu — la mission est en cours de traitement. Tu recevras la confirmation par e-mail.",
+            text: (
+              <>
+                Paiement reçu — la mission est en cours de traitement. Tu recevras la
+                confirmation par e-mail.{" "}
+                <Link href="/mes-missions" className="text-sh-amber underline">
+                  Voir mes missions →
+                </Link>
+              </>
+            ),
           });
         }
       },
@@ -182,10 +192,6 @@ export default function CommanderPage() {
     } else {
       setLoginMsg({ type: "ok", text: "Lien envoyé — vérifie ta boîte mail (et les spams)." });
     }
-  }
-
-  async function handleLogout() {
-    await supabase.auth.signOut();
   }
 
   async function handleOrder(packageCode: PackageCode, url: string, environment: string) {
@@ -240,6 +246,7 @@ export default function CommanderPage() {
 
   return (
     <div className="bg-sh-bg text-sh-ink font-plex-sans min-h-screen">
+      <SiteHeader />
       <div className="max-w-[640px] mx-auto px-5 pt-14 pb-24">
         <h2 className="sr-only">Formulaire de commande d&apos;un audit de sécurité</h2>
 
@@ -280,16 +287,6 @@ export default function CommanderPage() {
 
         {isAuthenticated && (
           <div>
-            <div className="flex justify-between items-center mb-6 font-plex-mono text-xs text-sh-ink-dim">
-              <span>Connecté : {session!.user.email}</span>
-              <button
-                onClick={handleLogout}
-                className="bg-transparent text-sh-ink-dim border border-sh-panel-line rounded-[3px] px-3.5 py-2 text-[13px] cursor-pointer"
-              >
-                Se déconnecter
-              </button>
-            </div>
-
             <MessageBox msg={orderMsg} />
 
             {PACKAGES.map((pkg) => (

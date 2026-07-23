@@ -6,9 +6,11 @@ import Link from "next/link";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase/client";
 import { RedactionBars } from "@/components/RedactionBars";
+import { SiteHeader } from "@/components/SiteHeader";
 
 type MissionInfo = {
   id: string;
+  client_id: string;
   package_name_snapshot: string;
   status: string;
 };
@@ -63,7 +65,7 @@ export default function MissionRapportPage() {
 
       const { data: missionData, error: missionError } = await supabase
         .from("missions")
-        .select("id, package_name_snapshot, status")
+        .select("id, client_id, package_name_snapshot, status")
         .eq("id", missionId)
         .maybeSingle();
 
@@ -173,12 +175,20 @@ export default function MissionRapportPage() {
     }
   }
 
+  const isClient = !!(session && mission && mission.client_id === session.user.id);
+  const dashboardHref = isClient ? "/mes-missions" : "/testeur/missions";
+
   if (pageState === "loading") {
-    return <div className="bg-sh-bg min-h-screen" />;
+    return (
+      <div className="bg-sh-bg min-h-screen">
+        <SiteHeader />
+      </div>
+    );
   }
 
   return (
     <div className="bg-sh-bg text-sh-ink font-plex-sans min-h-screen">
+      <SiteHeader />
       <div className="max-w-[640px] mx-auto px-5 pt-14 pb-24">
         <RedactionBars />
         <p className="font-plex-mono text-xs tracking-[0.14em] text-sh-amber uppercase mb-2.5">
@@ -187,6 +197,15 @@ export default function MissionRapportPage() {
         <h1 className="text-[28px] font-semibold mb-3.5 tracking-[-0.01em]">
           Soumettre le rapport
         </h1>
+
+        {pageState === "ready" && (
+          <Link
+            href={dashboardHref}
+            className="inline-block text-sh-ink-dim text-sm mb-6 hover:text-sh-ink"
+          >
+            ← Retour à mes missions
+          </Link>
+        )}
 
         {pageState === "unauthenticated" && (
           <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-7 text-sh-ink-dim text-sm">
