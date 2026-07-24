@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase/client";
 import { RedactionBars } from "@/components/RedactionBars";
 
 type Msg = { type: "error" | "ok"; text: string } | null;
+
+type SubmittedState = "pending" | "redirecting" | "rejected";
 
 const SPECIALTIES = [
   { value: "wordpress", label: "WordPress" },
@@ -15,6 +19,7 @@ const SPECIALTIES = [
 ];
 
 export default function CandidaturePage() {
+  const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [specialties, setSpecialties] = useState<string[]>([]);
@@ -23,6 +28,44 @@ export default function CandidaturePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [msg, setMsg] = useState<Msg>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [profileId, setProfileId] = useState<string | null>(null);
+  const [submittedState, setSubmittedState] = useState<SubmittedState>("pending");
+  const [rejectionReason, setRejectionReason] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!profileId || submittedState !== "pending") return;
+
+    const channel = supabase
+      .channel(`testeur-application-status-${profileId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "testeur_application_status",
+          filter: `profile_id=eq.${profileId}`,
+        },
+        (payload) => {
+          const updated = payload.new as {
+            verification_status: string;
+            excluded_reason: string | null;
+          };
+
+          if (updated.verification_status === "verified") {
+            setSubmittedState("redirecting");
+            router.push("/testeur/connexion");
+          } else if (updated.verification_status === "rejected") {
+            setRejectionReason(updated.excluded_reason ?? null);
+            setSubmittedState("rejected");
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [profileId, submittedState, router]);
 
   function toggleSpecialty(value: string) {
     setSpecialties((prev) =>
@@ -60,6 +103,7 @@ export default function CandidaturePage() {
         return;
       }
 
+      setProfileId(result.profile_id ?? null);
       setSubmitted(true);
     } catch (err) {
       setMsg({
@@ -202,6 +246,30 @@ export default function CandidaturePage() {
                 </div>
               )}
             </form>
+          </div>
+        ) : submittedState === "rejected" ? (
+          <div className="bg-sh-panel border border-sh-error-ink rounded-[3px] p-11 text-center">
+            <div className="inline-block font-plex-mono text-xs tracking-[0.12em] uppercase text-sh-error-ink border border-sh-error-ink rounded-[3px] px-3.5 py-1.5 mb-4.5">
+              Candidature non retenue
+            </div>
+            <p className="text-sh-ink-dim text-sm max-w-[42ch] mx-auto mb-6">
+              {rejectionReason || "Ta candidature n'a pas été retenue par l'équipe."}
+            </p>
+            <Link
+              href="/"
+              className="inline-block bg-sh-amber text-sh-amber-ink border-none rounded-[3px] px-4.5 py-3 font-plex-mono text-[13px] font-semibold tracking-[0.05em] uppercase"
+            >
+              Retour à l&apos;accueil
+            </Link>
+          </div>
+        ) : submittedState === "redirecting" ? (
+          <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-11 text-center">
+            <div className="inline-block font-plex-mono text-xs tracking-[0.12em] uppercase text-sh-ok-ink border border-sh-ok-ink rounded-[3px] px-3.5 py-1.5 mb-4.5">
+              Candidature validée
+            </div>
+            <p className="text-sh-ink-dim text-sm max-w-[42ch] mx-auto">
+              Candidature validée, connexion…
+            </p>
           </div>
         ) : (
           <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-11 text-center">
