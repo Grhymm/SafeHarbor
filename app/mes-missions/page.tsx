@@ -37,9 +37,59 @@ function formatDate(iso: string) {
 
 const REPORT_AVAILABLE_STATUSES: MissionStatus[] = ["delivered", "validated", "closed"];
 
-function MissionCard({ mission }: { mission: Mission }) {
+function MissionCard({
+  mission,
+  accessToken,
+  onValidated,
+}: {
+  mission: Mission;
+  accessToken: string;
+  onValidated: (missionId: string) => void;
+}) {
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
+  const [validating, setValidating] = useState(false);
+  const [validateError, setValidateError] = useState<string | null>(null);
+  const [validateMessage, setValidateMessage] = useState<string | null>(null);
+
+  async function handleValidateReport() {
+    setValidating(true);
+    setValidateError(null);
+    setValidateMessage(null);
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/validate-mission`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({ mission_id: mission.id }),
+        }
+      );
+      const result = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 409) {
+          setValidateError(result.error || "Cette mission n'est pas encore livrée.");
+        } else if (response.status === 403) {
+          setValidateError(result.error || "Tu n'es pas le client associé à cette mission.");
+        } else {
+          setValidateError(result.error || "Une erreur est survenue.");
+        }
+        return;
+      }
+
+      setValidateMessage(result.message || "Rapport validé.");
+      onValidated(mission.id);
+    } catch (err) {
+      setValidateError(`Erreur réseau : ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setValidating(false);
+    }
+  }
 
   async function handleDownloadReport() {
     setDownloading(true);
@@ -96,16 +146,37 @@ function MissionCard({ mission }: { mission: Mission }) {
       )}
       {REPORT_AVAILABLE_STATUSES.includes(mission.status) && (
         <>
-          <button
-            onClick={handleDownloadReport}
-            disabled={downloading}
-            className="font-plex-mono text-xs tracking-[0.06em] uppercase text-sh-amber border border-sh-amber rounded-[3px] px-3 py-2 bg-transparent cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {downloading ? "Préparation du lien…" : "Télécharger le rapport"}
-          </button>
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={handleDownloadReport}
+              disabled={downloading}
+              className="font-plex-mono text-xs tracking-[0.06em] uppercase text-sh-amber border border-sh-amber rounded-[3px] px-3 py-2 bg-transparent cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {downloading ? "Préparation du lien…" : "Télécharger le rapport"}
+            </button>
+            {mission.status === "delivered" && (
+              <button
+                onClick={handleValidateReport}
+                disabled={validating}
+                className="bg-sh-amber text-sh-amber-ink border-none rounded-[3px] px-3 py-2 font-plex-mono text-xs font-semibold tracking-[0.06em] uppercase cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {validating ? "Validation…" : "Valider le rapport"}
+              </button>
+            )}
+          </div>
           {downloadError && (
             <div className="bg-sh-error-bg text-sh-error-ink rounded-[3px] px-3.5 py-3 text-[13px] mt-3">
               {downloadError}
+            </div>
+          )}
+          {validateError && (
+            <div className="bg-sh-error-bg text-sh-error-ink rounded-[3px] px-3.5 py-3 text-[13px] mt-3">
+              {validateError}
+            </div>
+          )}
+          {validateMessage && (
+            <div className="bg-sh-ok-bg text-sh-ok-ink rounded-[3px] px-3.5 py-3 text-[13px] mt-3">
+              {validateMessage}
             </div>
           )}
         </>
@@ -210,7 +281,16 @@ export default function MesMissionsPage() {
         )}
 
         {missions?.map((mission) => (
-          <MissionCard key={mission.id} mission={mission} />
+          <MissionCard
+            key={mission.id}
+            mission={mission}
+            accessToken={session?.access_token ?? ""}
+            onValidated={(missionId) => {
+              setMissions((prev) =>
+                prev?.map((m) => (m.id === missionId ? { ...m, status: "validated" } : m)) ?? prev
+              );
+            }}
+          />
         ))}
       </div>
     </div>
