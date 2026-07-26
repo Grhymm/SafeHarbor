@@ -92,7 +92,7 @@ function PackageCard({
         onClick={() => onOrder(pkg.code, url.trim(), environment)}
         className="bg-sh-amber text-sh-amber-ink border-none rounded-[3px] px-4.5 py-3 font-plex-mono text-[13px] font-semibold tracking-[0.05em] uppercase cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isOrdering ? "Préparation du paiement…" : `Commander l'${pkg.name}`}
+        {isOrdering ? "Préparation du paiement…" : `Commander « ${pkg.name} »`}
       </button>
     </div>
   );
@@ -156,7 +156,7 @@ export default function CommanderPage() {
             type: "ok",
             text: (
               <>
-                Paiement reçu — la mission est en cours de traitement. Tu recevras la
+                Paiement reçu — la mission est en cours de traitement. Vous recevrez la
                 confirmation par e-mail.{" "}
                 <Link href="/mes-missions" className="text-sh-amber underline">
                   Voir mes missions →
@@ -173,7 +173,7 @@ export default function CommanderPage() {
 
   async function handleSendLink() {
     if (!email.trim()) {
-      setLoginMsg({ type: "error", text: "Entre une adresse e-mail." });
+      setLoginMsg({ type: "error", text: "Entrez une adresse e-mail." });
       return;
     }
 
@@ -187,13 +187,13 @@ export default function CommanderPage() {
     if (error) {
       setLoginMsg({ type: "error", text: `Erreur : ${error.message}` });
     } else {
-      setLoginMsg({ type: "ok", text: "Lien envoyé — vérifie ta boîte mail (et les spams)." });
+      setLoginMsg({ type: "ok", text: "Lien envoyé — vérifiez votre boîte mail (et les spams)." });
     }
   }
 
   async function handleOrder(packageCode: PackageCode, url: string, environment: string) {
     if (!url) {
-      setOrderMsg({ type: "error", text: "Indique l'URL du site à tester." });
+      setOrderMsg({ type: "error", text: "Indiquez l'URL du site à tester." });
       return;
     }
 
@@ -255,7 +255,7 @@ export default function CommanderPage() {
           Commander un audit de sécurité
         </h1>
         <p className="text-sh-ink-dim text-[15px] max-w-[52ch] mb-10">
-          Choisis un package, décris le périmètre à tester, et procède au paiement.
+          Choisissez un package, décrivez le périmètre à tester, et procédez au paiement.
         </p>
 
         {!isAuthenticated && (
@@ -267,7 +267,7 @@ export default function CommanderPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="toi@entreprise.com"
+              placeholder="vous@entreprise.com"
               autoComplete="email"
               className="w-full bg-sh-bg border border-sh-panel-line rounded-[3px] px-3 py-2.5 text-[14px] mb-4.5 text-sh-ink focus:outline-none focus:border-sh-amber"
             />

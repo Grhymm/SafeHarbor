@@ -78,7 +78,7 @@ Deno.serve(async (req: Request) => {
   if (!pkg) return json({ error: `Package inconnu ou inactif : ${package_code}` }, 404);
   if (!pkg.price_cents || !pkg.paddle_price_id) {
     return json(
-      { error: "Ce package n'est pas encore relié à Paddle (paddle_price_id manquant). Contacte l'équipe, ou utilise le formulaire Sur mesure." },
+      { error: "Ce package n'est pas encore relié à Paddle (paddle_price_id manquant). Contactez l'équipe, ou utilisez le formulaire Sur mesure." },
       409,
     );
   }

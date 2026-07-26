@@ -61,7 +61,7 @@ Deno.serve(async (req: Request) => {
     return json({ error: "Une adresse e-mail valide est requise." }, 400);
   }
   if (!motivation || typeof motivation !== "string" || motivation.trim().length < 20) {
-    return json({ error: "Décris ton expérience en au moins quelques phrases (20 caractères minimum)." }, 400);
+    return json({ error: "Décrivez votre expérience en au moins quelques phrases (20 caractères minimum)." }, 400);
   }
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);

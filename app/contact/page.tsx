@@ -1,8 +1,6 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import { RedactionBars } from "@/components/RedactionBars";
 
-// TODO: adresse de contact placeholder — à remplacer par une vraie boîte
-// une fois que l'équipe en a désigné une.
 const CONTACT_EMAIL = "contact@safeharbor.io";
 
 export default function ContactPage() {
@@ -19,7 +17,7 @@ export default function ContactPage() {
         </h1>
         <p className="text-sh-ink-dim text-[15px] max-w-[52ch] mb-10">
           Pour un périmètre complexe, multi-domaines, ou des besoins spécifiques qui sortent des
-          trois packages standards, décris-nous ton besoin et on revient vers toi avec un devis.
+          trois packages standards, décrivez-nous votre besoin et on revient vers vous avec un devis.
         </p>
 
         <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-7">
@@ -33,8 +31,8 @@ export default function ContactPage() {
             {CONTACT_EMAIL}
           </a>
           <p className="text-sh-ink-dim text-[13px] mt-4">
-            Précise l&apos;URL (ou les URLs) à couvrir, l&apos;environnement, et ce qui rend le
-            périmètre plus complexe qu&apos;un audit standard — ça nous aide à revenir vers toi
+            Précisez l&apos;URL (ou les URLs) à couvrir, l&apos;environnement, et ce qui rend le
+            périmètre plus complexe qu&apos;un audit standard — ça nous aide à revenir vers vous
             plus vite avec un chiffrage.
           </p>
         </div>

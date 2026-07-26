@@ -146,10 +146,11 @@ export default function CandidaturePage() {
           Rejoindre le vivier de testeurs
         </h1>
         <p className="text-sh-ink-dim text-[15px] max-w-[52ch] mb-10">
-          Toute candidature est examinée manuellement avant activation. Tu peux postuler ici,
-          mais tu n&apos;auras accès à <strong className="text-sh-ink font-medium">aucune mission</strong> tant
-          qu&apos;un membre de l&apos;équipe n&apos;a pas validé ton profil — c&apos;est cette vérification qui
-          protège nos clients.
+          Toute candidature est examinée manuellement avant activation. Vous pouvez postuler ici,
+          mais vous n&apos;aurez accès à{" "}
+          <strong className="text-sh-ink font-medium">aucune mission</strong>{" "}
+          tant qu&apos;un membre de l&apos;équipe n&apos;a pas validé votre profil — c&apos;est
+          cette vérification qui protège nos clients.
         </p>
 
         {!submitted ? (
@@ -273,8 +274,8 @@ export default function CandidaturePage() {
                   className="w-full bg-sh-bg border border-sh-panel-line rounded-[3px] px-3 py-2.5 text-[14px] text-sh-ink min-h-[90px] resize-y focus:outline-none focus:border-sh-amber"
                 />
                 <p className="text-xs text-sh-ink-dim mt-1.5">
-                  20 caractères minimum — quelques phrases suffisent, ce n&apos;est pas une lettre de
-                  motivation.
+                  20 caractères minimum — quelques phrases suffisent, ce n&apos;est pas une lettre
+                  de motivation.
                 </p>
               </div>
 
@@ -303,7 +304,7 @@ export default function CandidaturePage() {
               Candidature non retenue
             </div>
             <p className="text-sh-ink-dim text-sm max-w-[42ch] mx-auto mb-6">
-              {rejectionReason || "Ta candidature n'a pas été retenue par l'équipe."}
+              {rejectionReason || "Votre candidature n'a pas été retenue par l'équipe."}
             </p>
             <Link
               href="/"
@@ -327,15 +328,15 @@ export default function CandidaturePage() {
               En attente de validation
             </div>
             <p className="text-sh-ink-dim text-sm max-w-[42ch] mx-auto">
-              Ta candidature est enregistrée. Un membre de l&apos;équipe examine ton profil et passe ton
-              compte en statut vérifié avant toute assignation de mission.
+              Votre candidature est enregistrée. Un membre de l&apos;équipe examine votre profil et
+              passe votre compte en statut vérifié avant toute assignation de mission.
             </p>
             <p className="text-sh-ink-dim text-sm max-w-[42ch] mx-auto mt-4">
-              Une fois ton profil validé, connecte-toi sur{" "}
+              Une fois votre profil validé, connectez-vous sur{" "}
               <Link href="/testeur/connexion" className="text-sh-amber">
                 /testeur/connexion
               </Link>{" "}
-              pour voir tes missions.
+              pour voir vos missions.
             </p>
           </div>
         )}

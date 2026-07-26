@@ -83,7 +83,7 @@ export default function TesteurMissionsPage() {
         </p>
         <h1 className="text-[28px] font-semibold mb-3.5 tracking-[-0.01em]">Mes missions</h1>
         <p className="text-sh-ink-dim text-[15px] max-w-[52ch] mb-8">
-          Missions qui te sont assignées.
+          Missions qui vous sont assignées.
         </p>
 
         {errorMsg && (

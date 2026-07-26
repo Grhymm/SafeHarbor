@@ -97,7 +97,7 @@ Deno.serve(async (req: Request) => {
   if (mission.testeur_id) testeurIds.add(mission.testeur_id);
 
   if (!testeurIds.has(user.id)) {
-    return json({ error: "Tu n'es pas assigné à cette mission" }, 403);
+    return json({ error: "Vous n'êtes pas assigné à cette mission" }, 403);
   }
 
   if (!ALLOWED_PRIOR_STATUSES.includes(mission.status)) {

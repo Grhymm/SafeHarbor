@@ -50,7 +50,7 @@ export default function ConnexionPage() {
 
   async function handleSendLink() {
     if (!email.trim()) {
-      setMsg({ type: "error", text: "Entre une adresse e-mail." });
+      setMsg({ type: "error", text: "Entrez une adresse e-mail." });
       return;
     }
 
@@ -64,7 +64,7 @@ export default function ConnexionPage() {
     if (error) {
       setMsg({ type: "error", text: `Erreur : ${error.message}` });
     } else {
-      setMsg({ type: "ok", text: "Lien envoyé — vérifie ta boîte mail (et les spams)." });
+      setMsg({ type: "ok", text: "Lien envoyé — vérifiez votre boîte mail (et les spams)." });
     }
   }
 
@@ -80,10 +80,10 @@ export default function ConnexionPage() {
         {viewState === "login" && (
           <>
             <p className="text-sh-ink-dim text-[15px] max-w-[52ch] mb-10">
-              Reçois un lien de connexion par e-mail pour accéder au suivi de tes missions. Pas
+              Recevez un lien de connexion par e-mail pour accéder au suivi de vos missions. Pas
               encore de compte ?{" "}
               <Link href="/commander" className="text-sh-amber">
-                Commande un audit
+                Commandez un audit
               </Link>{" "}
               pour en créer un.
             </p>
@@ -96,7 +96,7 @@ export default function ConnexionPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="toi@entreprise.com"
+                placeholder="vous@entreprise.com"
                 autoComplete="email"
                 className="w-full bg-sh-bg border border-sh-panel-line rounded-[3px] px-3 py-2.5 text-[14px] mb-4.5 text-sh-ink focus:outline-none focus:border-sh-amber"
               />

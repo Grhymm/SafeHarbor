@@ -201,7 +201,7 @@ export default function MissionSignaturePage() {
 
         {pageState === "unauthenticated" && (
           <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-7 text-sh-ink-dim text-sm">
-            Tu dois être connecté pour accéder à cette page.{" "}
+            Vous devez être connecté pour accéder à cette page.{" "}
             <Link href="/commander" className="text-sh-amber">
               Connexion client
             </Link>{" "}
@@ -214,7 +214,7 @@ export default function MissionSignaturePage() {
 
         {pageState === "not-found" && (
           <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-7 text-sh-ink-dim text-sm">
-            Mission introuvable, ou tu n&apos;as pas accès à cette mission.
+            Mission introuvable, ou vous n&apos;avez pas accès à cette mission.
           </div>
         )}
 
@@ -243,10 +243,10 @@ export default function MissionSignaturePage() {
 
             <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-7 mb-5 text-[14px] text-sh-ink-dim space-y-4">
               <p>
-                En signant électroniquement ce document, tu confirmes avoir pris connaissance des
-                termes de l&apos;Autorisation de Test pour la mission{" "}
+                En signant électroniquement ce document, vous confirmez avoir pris connaissance
+                des termes de l&apos;Autorisation de Test pour la mission{" "}
                 <strong className="text-sh-ink font-medium">{mission.package_name_snapshot}</strong>{" "}
-                et tu les acceptes.
+                et vous les acceptez.
               </p>
               <p>
                 <strong className="text-sh-ink font-medium">Périmètre.</strong> Le test autorisé
@@ -303,7 +303,7 @@ export default function MissionSignaturePage() {
                   {signResult.client_signed ? "Le client a signé." : "En attente de la signature du client."}
                 </p>
                 {alreadySignedByMe && (
-                  <p className="text-sh-ok-ink text-sm mb-4">Tu as déjà signé ce document.</p>
+                  <p className="text-sh-ok-ink text-sm mb-4">Vous avez déjà signé ce document.</p>
                 )}
                 <Link
                   href={dashboardHref}

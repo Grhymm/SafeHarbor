@@ -209,7 +209,7 @@ export default function MissionRapportPage() {
 
         {pageState === "unauthenticated" && (
           <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-7 text-sh-ink-dim text-sm">
-            Tu dois être connecté pour accéder à cette page.{" "}
+            Vous devez être connecté pour accéder à cette page.{" "}
             <Link href="/testeur/connexion" className="text-sh-amber">
               Connexion testeur
             </Link>
@@ -218,7 +218,7 @@ export default function MissionRapportPage() {
 
         {pageState === "not-found" && (
           <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-7 text-sh-ink-dim text-sm">
-            Mission introuvable, ou tu n&apos;y es pas assigné.
+            Mission introuvable, ou vous n&apos;y êtes pas assigné.
           </div>
         )}
 
@@ -249,7 +249,7 @@ export default function MissionRapportPage() {
                 />
                 {hadExistingReport && (
                   <p className="text-xs text-sh-ink-dim mt-1.5">
-                    Laisse ce champ vide pour conserver le fichier déjà envoyé.
+                    Laissez ce champ vide pour conserver le fichier déjà envoyé.
                   </p>
                 )}
               </div>

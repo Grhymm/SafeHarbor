@@ -17,6 +17,15 @@ type Mission = {
   target_urls: string[];
   created_at: string;
   status: MissionStatus;
+  testeur_id: string | null;
+};
+
+const CERTIFICATION_LABELS: Record<string, string> = {
+  oscp: "OSCP",
+  ceh: "CEH",
+  passi: "PASSI",
+  gpen: "GPEN",
+  autre: "Autre",
 };
 
 function formatPrice(cents: number, currency: string) {
@@ -51,6 +60,28 @@ function MissionCard({
   const [validating, setValidating] = useState(false);
   const [validateError, setValidateError] = useState<string | null>(null);
   const [validateMessage, setValidateMessage] = useState<string | null>(null);
+  const [testeurCertifications, setTesteurCertifications] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!REPORT_AVAILABLE_STATUSES.includes(mission.status) || !mission.testeur_id) return;
+
+    let active = true;
+
+    supabase
+      .from("testeur_profiles")
+      .select("certifications")
+      .eq("profile_id", mission.testeur_id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!active) return;
+        const certs = (data?.certifications as string[] | null) ?? [];
+        setTesteurCertifications(certs.filter((c) => c !== "aucune"));
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [mission.status, mission.testeur_id]);
 
   async function handleValidateReport() {
     setValidating(true);
@@ -75,7 +106,7 @@ function MissionCard({
         if (response.status === 409) {
           setValidateError(result.error || "Cette mission n'est pas encore livrée.");
         } else if (response.status === 403) {
-          setValidateError(result.error || "Tu n'es pas le client associé à cette mission.");
+          setValidateError(result.error || "Vous n'êtes pas le client associé à cette mission.");
         } else {
           setValidateError(result.error || "Une erreur est survenue.");
         }
@@ -163,6 +194,14 @@ function MissionCard({
                 {validating ? "Validation…" : "Valider le rapport"}
               </button>
             )}
+            {testeurCertifications.map((cert) => (
+              <span
+                key={cert}
+                className="inline-flex items-center font-plex-mono text-[11px] tracking-[0.06em] uppercase text-sh-ink-dim border border-sh-panel-line rounded-[3px] px-2.5 py-2"
+              >
+                {CERTIFICATION_LABELS[cert] ?? cert}
+              </span>
+            ))}
           </div>
           {downloadError && (
             <div className="bg-sh-error-bg text-sh-error-ink rounded-[3px] px-3.5 py-3 text-[13px] mt-3">
@@ -198,7 +237,7 @@ export default function MesMissionsPage() {
     async function loadMissions() {
       const { data, error } = await supabase
         .from("missions")
-        .select("id, package_name_snapshot, price_cents_snapshot, currency_snapshot, target_urls, created_at, status")
+        .select("id, package_name_snapshot, price_cents_snapshot, currency_snapshot, target_urls, created_at, status, testeur_id")
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -261,7 +300,7 @@ export default function MesMissionsPage() {
         </p>
         <h1 className="text-[28px] font-semibold mb-3.5 tracking-[-0.01em]">Mes missions</h1>
         <p className="text-sh-ink-dim text-[15px] max-w-[52ch] mb-8">
-          Suivi de tes audits de sécurité commandés.
+          Suivi de vos audits de sécurité commandés.
         </p>
 
         {errorMsg && (

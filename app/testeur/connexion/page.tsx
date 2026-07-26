@@ -77,7 +77,7 @@ export default function TesteurConnexionPage() {
 
   async function handleSendLink() {
     if (!email.trim()) {
-      setMsg({ type: "error", text: "Entre une adresse e-mail." });
+      setMsg({ type: "error", text: "Entrez une adresse e-mail." });
       return;
     }
 
@@ -91,7 +91,7 @@ export default function TesteurConnexionPage() {
     if (error) {
       setMsg({ type: "error", text: `Erreur : ${error.message}` });
     } else {
-      setMsg({ type: "ok", text: "Lien envoyé — vérifie ta boîte mail (et les spams)." });
+      setMsg({ type: "ok", text: "Lien envoyé — vérifiez votre boîte mail (et les spams)." });
     }
   }
 
@@ -109,10 +109,10 @@ export default function TesteurConnexionPage() {
         {viewState.kind === "login" && (
           <>
             <p className="text-sh-ink-dim text-[15px] max-w-[52ch] mb-10">
-              Reconnecte-toi avec l&apos;adresse e-mail de ta candidature. Cette page ne crée pas
-              de nouveau compte — si tu n&apos;as pas encore candidaté,{" "}
+              Reconnectez-vous avec l&apos;adresse e-mail de votre candidature. Cette page ne crée
+              pas de nouveau compte — si vous n&apos;avez pas encore candidaté,{" "}
               <a href="/candidature" className="text-sh-amber">
-                postule ici
+                postulez ici
               </a>
               .
             </p>
@@ -125,7 +125,7 @@ export default function TesteurConnexionPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="toi@exemple.com"
+                placeholder="vous@exemple.com"
                 autoComplete="email"
                 className="w-full bg-sh-bg border border-sh-panel-line rounded-[3px] px-3 py-2.5 text-[14px] mb-4.5 text-sh-ink focus:outline-none focus:border-sh-amber"
               />
@@ -155,8 +155,9 @@ export default function TesteurConnexionPage() {
               Candidature en cours d&apos;examen
             </p>
             <p className="text-sh-ink-dim text-sm">
-              Ta candidature est toujours en cours d&apos;examen. Reviens un peu plus tard — tu
-              recevras un e-mail dès qu&apos;un membre de l&apos;équipe aura validé ton profil.
+              Votre candidature est toujours en cours d&apos;examen. Revenez un peu plus tard —
+              vous recevrez un e-mail dès qu&apos;un membre de l&apos;équipe aura validé votre
+              profil.
             </p>
           </div>
         )}
@@ -180,7 +181,7 @@ export default function TesteurConnexionPage() {
             </p>
             <p className="text-sh-ink-dim text-sm mb-6">
               {viewState.reason ||
-                "Ta candidature n'a pas été retenue par l'équipe."}
+                "Votre candidature n'a pas été retenue par l'équipe."}
             </p>
             <Link
               href="/"

@@ -80,7 +80,7 @@ Deno.serve(async (req: Request) => {
   const isTesteur = testeurIds.has(user.id);
 
   if (!isClient && !isTesteur) {
-    return json({ error: "Tu ne fais pas partie de cette mission" }, 403);
+    return json({ error: "Vous ne faites pas partie de cette mission" }, 403);
   }
   if (testeurIds.size === 0) {
     return json(

@@ -71,7 +71,7 @@ Deno.serve(async (req: Request) => {
   if (!mission) return json({ error: "Mission introuvable" }, 404);
 
   if (mission.client_id !== user.id) {
-    return json({ error: "Tu n'es pas le client de cette mission" }, 403);
+    return json({ error: "Vous n'êtes pas le client de cette mission" }, 403);
   }
 
   if (mission.status !== "delivered") {
