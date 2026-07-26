@@ -98,13 +98,13 @@ export default function Home() {
             <div className="flex gap-3.5 flex-wrap animate-[fadeUpHero_0.7s_ease_both]">
               <Link
                 href="/commander"
-                className="inline-flex items-center gap-2 rounded-[3px] px-5 py-3.5 font-plex-mono text-[13px] font-semibold tracking-[0.04em] uppercase bg-sh-amber text-sh-amber-ink transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_28px_-8px_var(--color-sh-amber-glow)]"
+                className="inline-flex items-center gap-2 rounded-[3px] px-5 py-3.5 font-plex-mono text-[13px] font-semibold tracking-[0.04em] uppercase bg-sh-amber text-sh-amber-ink transition-all duration-200 hover:[filter:brightness(1.08)]"
               >
                 Commander un audit
               </Link>
               <Link
                 href="/candidature"
-                className="inline-flex items-center gap-2 rounded-[3px] px-5 py-3.5 font-plex-mono text-[13px] font-semibold tracking-[0.04em] uppercase border border-sh-panel-line text-sh-ink bg-white/[0.02] transition-all duration-200 hover:border-sh-amber hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 rounded-[3px] px-5 py-3.5 font-plex-mono text-[13px] font-semibold tracking-[0.04em] uppercase border border-sh-panel-line text-sh-ink bg-white/[0.02] transition-all duration-200 hover:border-sh-amber"
               >
                 Rejoindre le vivier de testeurs
               </Link>
@@ -291,7 +291,7 @@ export default function Home() {
             </div>
             <Link
               href="/candidature"
-              className="inline-flex items-center gap-2 whitespace-nowrap rounded-[3px] px-5 py-3.5 font-plex-mono text-[13px] font-semibold tracking-[0.04em] uppercase bg-sh-amber text-sh-amber-ink transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_28px_-8px_var(--color-sh-amber-glow)]"
+              className="inline-flex items-center gap-2 whitespace-nowrap rounded-[3px] px-5 py-3.5 font-plex-mono text-[13px] font-semibold tracking-[0.04em] uppercase bg-sh-amber text-sh-amber-ink transition-all duration-200 hover:[filter:brightness(1.08)]"
             >
               Postuler maintenant
             </Link>

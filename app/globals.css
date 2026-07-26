@@ -1,51 +1,85 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --sh-ink: #e8e6df;
+  --sh-ink-dim: #9a988f;
+  --sh-ink-faint: #6b6a63;
+  --sh-bg: #0b0d0f;
+  --sh-panel: #14171a;
+  --sh-panel-line: #262a2e;
+  --sh-amber: #e8b339;
+  --sh-amber-ink: #241a02;
+  --sh-bar: #050607;
+
+  --sh-amber-glow: rgba(232, 179, 57, 0.35);
+  --sh-glass: rgba(20, 23, 26, 0.55);
+  --sh-glass-line: rgba(255, 255, 255, 0.08);
+
+  --sh-error-bg: #2a1414;
+  --sh-error-ink: #f0a3a3;
+  --sh-ok-bg: #14241a;
+  --sh-ok-ink: #8fd6a8;
+  --sh-info-bg: #131e2a;
+  --sh-info-ink: #86b8e0;
+}
+
+:root[data-theme="light"] {
+  --sh-ink: #1a1912;
+  --sh-ink-dim: #5c5a4f;
+  --sh-ink-faint: #8a8778;
+  --sh-bg: #faf9f4;
+  --sh-panel: #ffffff;
+  --sh-panel-line: #e4e1d6;
+  --sh-amber: #c9922a;
+  --sh-amber-ink: #2b1e04;
+  --sh-bar: #14130d;
+
+  --sh-amber-glow: rgba(201, 146, 42, 0.22);
+  --sh-glass: rgba(255, 255, 255, 0.6);
+  --sh-glass-line: rgba(20, 20, 10, 0.08);
+
+  --sh-error-bg: #fbe9e9;
+  --sh-error-ink: #a83a3a;
+  --sh-ok-bg: #e6f4ea;
+  --sh-ok-ink: #2f7d4f;
+  --sh-info-bg: #e8f0f9;
+  --sh-info-ink: #2f6fa8;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  --color-sh-bg: #0b0d0f;
-  --color-sh-panel: #14171a;
-  --color-sh-panel-line: #262a2e;
-  --color-sh-amber: #e8b339;
-  --color-sh-amber-ink: #241a02;
-  --color-sh-ink: #e8e6df;
-  --color-sh-ink-dim: #9a988f;
-  --color-sh-ink-faint: #6b6a63;
-  --color-sh-bar: #050607;
-  --color-sh-error-bg: #2a1414;
-  --color-sh-error-ink: #f0a3a3;
-  --color-sh-ok-bg: #14241a;
-  --color-sh-ok-ink: #8fd6a8;
-  --color-sh-info-bg: #131e2a;
-  --color-sh-info-ink: #86b8e0;
+  --color-sh-bg: var(--sh-bg);
+  --color-sh-panel: var(--sh-panel);
+  --color-sh-panel-line: var(--sh-panel-line);
+  --color-sh-amber: var(--sh-amber);
+  --color-sh-amber-ink: var(--sh-amber-ink);
+  --color-sh-ink: var(--sh-ink);
+  --color-sh-ink-dim: var(--sh-ink-dim);
+  --color-sh-ink-faint: var(--sh-ink-faint);
+  --color-sh-bar: var(--sh-bar);
+  --color-sh-error-bg: var(--sh-error-bg);
+  --color-sh-error-ink: var(--sh-error-ink);
+  --color-sh-ok-bg: var(--sh-ok-bg);
+  --color-sh-ok-ink: var(--sh-ok-ink);
+  --color-sh-info-bg: var(--sh-info-bg);
+  --color-sh-info-ink: var(--sh-info-ink);
 
-  --color-sh-amber-glow: rgba(232, 179, 57, 0.35);
-  --color-sh-glass: rgba(20, 23, 26, 0.55);
-  --color-sh-glass-line: rgba(255, 255, 255, 0.08);
+  --color-sh-amber-glow: var(--sh-amber-glow);
+  --color-sh-glass: var(--sh-glass);
+  --color-sh-glass-line: var(--sh-glass-line);
 
   --font-plex-mono: var(--font-ibm-plex-mono);
   --font-plex-sans: var(--font-ibm-plex-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-sh-bg);
+  color: var(--color-sh-ink);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
 html {
@@ -96,20 +130,14 @@ html {
     -webkit-backdrop-filter: blur(16px) saturate(140%);
     backdrop-filter: blur(16px) saturate(140%);
     border: 1px solid var(--color-sh-glass-line);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.04),
-      0 20px 40px -24px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
     transition:
-      transform 0.25s ease,
       border-color 0.25s ease,
       box-shadow 0.25s ease;
   }
   .sh-glass:hover {
     border-color: color-mix(in srgb, var(--color-sh-amber) 28%, transparent);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.06),
-      0 24px 48px -20px rgba(0, 0, 0, 0.55),
-      0 0 0 1px color-mix(in srgb, var(--color-sh-amber) 8%, transparent);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
   }
 }
 

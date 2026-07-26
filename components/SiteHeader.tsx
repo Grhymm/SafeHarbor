@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase/client";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 type Role = "client" | "testeur" | "admin" | null;
 
@@ -104,6 +105,8 @@ export function SiteHeader() {
               </button>
             </>
           )}
+
+          <ThemeToggle />
         </div>
       </div>
     </div>
