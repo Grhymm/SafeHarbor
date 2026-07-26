@@ -17,7 +17,9 @@
 // profile_id renvoyé au frontend : sert uniquement à afficher/suivre le
 // statut de LA candidature qu'on vient de soumettre (via la table publique
 // et restreinte testeur_application_status), pas à authentifier quoi que
-// ce soit.
+// ce soit. Le frontend (/candidature) s'y abonne en realtime pour détecter
+// verified/rejected sans que le candidat ait à rafraîchir la page — sans ce
+// champ, l'écran reste bloqué sur "en attente" indéfiniment.
 // ============================================================================
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -49,7 +51,7 @@ Deno.serve(async (req: Request) => {
     return json({ error: "JSON invalide" }, 400);
   }
 
-  const { full_name, email, specialties, legal_status, motivation } = body;
+  const { full_name, email, specialties, legal_status, motivation, certifications } = body;
 
   if (!full_name || typeof full_name !== "string" || full_name.trim().length < 2) {
     return json({ error: "Le nom complet est requis." }, 400);
@@ -94,6 +96,7 @@ Deno.serve(async (req: Request) => {
     profile_id: userId,
     verification_status: "pending",
     specialties: Array.isArray(specialties) ? specialties : [],
+    certifications: Array.isArray(certifications) ? certifications : [],
     legal_status: legal_status ?? null,
     bio: motivation,
     active: false,

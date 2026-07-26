@@ -18,11 +18,21 @@ const SPECIALTIES = [
   { value: "autre", label: "Autre" },
 ];
 
+const CERTIFICATIONS = [
+  { value: "oscp", label: "OSCP" },
+  { value: "ceh", label: "CEH" },
+  { value: "passi", label: "PASSI" },
+  { value: "gpen", label: "GPEN" },
+  { value: "autre", label: "Autre" },
+  { value: "aucune", label: "Aucune pour l'instant" },
+];
+
 export default function CandidaturePage() {
   const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [specialties, setSpecialties] = useState<string[]>([]);
+  const [certifications, setCertifications] = useState<string[]>([]);
   const [legalStatus, setLegalStatus] = useState("");
   const [motivation, setMotivation] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,6 +83,12 @@ export default function CandidaturePage() {
     );
   }
 
+  function toggleCertification(value: string) {
+    setCertifications((prev) =>
+      prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value]
+    );
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -89,6 +105,7 @@ export default function CandidaturePage() {
             full_name: fullName.trim(),
             email: email.trim(),
             specialties,
+            certifications,
             legal_status: legalStatus || null,
             motivation: motivation.trim(),
           }),
@@ -192,6 +209,39 @@ export default function CandidaturePage() {
                     );
                   })}
                 </div>
+              </div>
+
+              <div className="mb-5.5">
+                <label className="block font-plex-mono text-[11px] tracking-[0.08em] uppercase text-sh-ink-dim mb-2">
+                  Certifications
+                </label>
+                <div className="flex flex-wrap gap-2.5">
+                  {CERTIFICATIONS.map((c) => {
+                    const checked = certifications.includes(c.value);
+                    return (
+                      <label key={c.value} className="relative cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => toggleCertification(c.value)}
+                          className="absolute opacity-0 w-full h-full cursor-pointer m-0"
+                        />
+                        <span
+                          className={`inline-block px-3.5 py-2 border rounded-[3px] text-[13px] ${
+                            checked
+                              ? "border-sh-amber text-sh-amber bg-sh-amber/[0.08]"
+                              : "border-sh-panel-line text-sh-ink-dim"
+                          }`}
+                        >
+                          {c.label}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+                <p className="text-xs text-sh-ink-dim mt-1.5">
+                  Auto-déclaré à ce stade — vérifié manuellement comme le reste du profil.
+                </p>
               </div>
 
               <div className="mb-5.5">
