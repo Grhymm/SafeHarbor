@@ -106,6 +106,21 @@ export function SiteHeader() {
             </>
           )}
 
+          {session && role === "admin" && (
+            <>
+              <Link href="/admin" className="transition-colors duration-200 hover:text-sh-ink">
+                Admin
+              </Link>
+              <span className="font-plex-mono text-xs">{session.user.email}</span>
+              <button
+                onClick={handleLogout}
+                className="bg-transparent text-sh-ink-dim border border-sh-panel-line rounded-[3px] px-3.5 py-2 text-[13px] cursor-pointer"
+              >
+                Se déconnecter
+              </button>
+            </>
+          )}
+
           <ThemeToggle />
         </div>
       </div>
