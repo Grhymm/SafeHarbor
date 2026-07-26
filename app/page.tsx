@@ -108,6 +108,12 @@ export default function Home() {
               >
                 Rejoindre le vivier de testeurs
               </Link>
+              <Link
+                href="/connexion"
+                className="inline-flex items-center gap-2 rounded-[3px] px-5 py-3.5 font-plex-mono text-[13px] font-semibold tracking-[0.04em] uppercase text-sh-ink-dim transition-colors duration-200 hover:text-sh-ink"
+              >
+                Se connecter
+              </Link>
             </div>
           </div>
 

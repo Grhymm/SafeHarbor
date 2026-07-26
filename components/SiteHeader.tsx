@@ -60,6 +60,9 @@ export function SiteHeader() {
         <div className="flex items-center gap-7 text-sm text-sh-ink-dim">
           {!session && (
             <>
+              <Link href="/connexion" className="transition-colors duration-200 hover:text-sh-ink">
+                Se connecter
+              </Link>
               <Link href="/commander" className="transition-colors duration-200 hover:text-sh-ink">
                 Commander un audit
               </Link>
