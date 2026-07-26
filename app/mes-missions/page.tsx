@@ -63,25 +63,50 @@ function MissionCard({
   const [testeurCertifications, setTesteurCertifications] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!REPORT_AVAILABLE_STATUSES.includes(mission.status) || !mission.testeur_id) return;
+    if (!REPORT_AVAILABLE_STATUSES.includes(mission.status)) return;
 
     let active = true;
 
-    supabase
-      .from("testeur_profiles")
-      .select("certifications")
-      .eq("profile_id", mission.testeur_id)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (!active) return;
-        const certs = (data?.certifications as string[] | null) ?? [];
-        setTesteurCertifications(certs.filter((c) => c !== "aucune"));
+    async function loadCertifications() {
+      // L'assignation d'un testeur passe par mission_assignments (support
+      // multi-testeur) — missions.testeur_id n'est qu'un champ historique,
+      // pas toujours renseigné. Même logique de repli que côté Edge
+      // Functions (validate-mission, sign-document, submit-report).
+      const { data: assignments } = await supabase
+        .from("mission_assignments")
+        .select("testeur_id")
+        .eq("mission_id", mission.id);
+
+      const testeurIds = new Set<string>((assignments ?? []).map((a) => a.testeur_id));
+      if (mission.testeur_id) testeurIds.add(mission.testeur_id);
+
+      if (testeurIds.size === 0) {
+        if (active) setTesteurCertifications([]);
+        return;
+      }
+
+      const { data: profiles } = await supabase
+        .from("testeur_profiles")
+        .select("certifications")
+        .in("profile_id", [...testeurIds]);
+
+      if (!active) return;
+
+      const merged = new Set<string>();
+      (profiles ?? []).forEach((profile) => {
+        ((profile.certifications as string[] | null) ?? []).forEach((cert) => {
+          if (cert !== "aucune") merged.add(cert);
+        });
       });
+      setTesteurCertifications([...merged]);
+    }
+
+    loadCertifications();
 
     return () => {
       active = false;
     };
-  }, [mission.status, mission.testeur_id]);
+  }, [mission.status, mission.id, mission.testeur_id]);
 
   async function handleValidateReport() {
     setValidating(true);
