@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAdminSession } from "@/lib/useAdminSession";
+import { useAdminSessionContext } from "@/lib/AdminSessionContext";
 import { RedactionBars } from "@/components/RedactionBars";
-import { SiteHeader } from "@/components/SiteHeader";
 
 type Application = {
   profile_id: string;
@@ -199,12 +198,12 @@ function ApplicationCard({
 }
 
 export default function AdminCandidaturesPage() {
-  const { session, state } = useAdminSession();
+  const session = useAdminSessionContext();
   const [applications, setApplications] = useState<Application[] | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    if (state !== "ready" || !session) return;
+    if (!session) return;
 
     async function loadApplications() {
       try {
@@ -232,69 +231,42 @@ export default function AdminCandidaturesPage() {
     }
 
     loadApplications();
-  }, [state, session]);
-
-  if (state === "checking" || state === "unauthenticated") {
-    return (
-      <div className="bg-sh-bg min-h-screen">
-        <SiteHeader />
-      </div>
-    );
-  }
+  }, [session]);
 
   return (
-    <div className="bg-sh-bg text-sh-ink font-plex-sans min-h-screen">
-      <SiteHeader />
-      <div className="max-w-[720px] mx-auto px-5 pt-14 pb-24">
-        <RedactionBars />
-        <p className="font-plex-mono text-xs tracking-[0.14em] text-sh-amber uppercase mb-2.5">
-          Accès administrateur — candidatures
-        </p>
-        <h1 className="text-[28px] font-semibold mb-3.5 tracking-[-0.01em]">Candidatures testeurs</h1>
+    <>
+      <RedactionBars />
+      <p className="font-plex-mono text-xs tracking-[0.14em] text-sh-amber uppercase mb-2.5">
+        Accès administrateur — candidatures
+      </p>
+      <h1 className="text-[28px] font-semibold mb-3.5 tracking-[-0.01em]">Candidatures testeurs</h1>
 
-        {state === "forbidden" && (
-          <div className="bg-sh-panel border border-sh-error-ink rounded-[3px] p-7">
-            <p className="font-plex-mono text-xs tracking-[0.08em] uppercase text-sh-error-ink mb-3">
-              Accès réservé
-            </p>
-            <p className="text-sh-ink-dim text-sm">
-              Ce compte n&apos;a pas les droits administrateur nécessaires pour accéder à cette
-              zone.
-            </p>
-          </div>
-        )}
+      {errorMsg && (
+        <div className="bg-sh-error-bg text-sh-error-ink rounded-[3px] px-3.5 py-3 text-[13px] mb-5">
+          {errorMsg}
+        </div>
+      )}
 
-        {state === "ready" && (
-          <>
-            {errorMsg && (
-              <div className="bg-sh-error-bg text-sh-error-ink rounded-[3px] px-3.5 py-3 text-[13px] mb-5">
-                {errorMsg}
-              </div>
-            )}
+      {applications === null && !errorMsg && (
+        <div className="text-sh-ink-dim text-sm">Chargement des candidatures…</div>
+      )}
 
-            {applications === null && !errorMsg && (
-              <div className="text-sh-ink-dim text-sm">Chargement des candidatures…</div>
-            )}
+      {applications !== null && applications.length === 0 && (
+        <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-7 text-center text-sh-ink-dim text-sm">
+          Aucune candidature en attente.
+        </div>
+      )}
 
-            {applications !== null && applications.length === 0 && (
-              <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-7 text-center text-sh-ink-dim text-sm">
-                Aucune candidature en attente.
-              </div>
-            )}
-
-            {applications?.map((application) => (
-              <ApplicationCard
-                key={application.profile_id}
-                application={application}
-                accessToken={session?.access_token ?? ""}
-                onResolved={(profileId) =>
-                  setApplications((prev) => prev?.filter((a) => a.profile_id !== profileId) ?? prev)
-                }
-              />
-            ))}
-          </>
-        )}
-      </div>
-    </div>
+      {applications?.map((application) => (
+        <ApplicationCard
+          key={application.profile_id}
+          application={application}
+          accessToken={session?.access_token ?? ""}
+          onResolved={(profileId) =>
+            setApplications((prev) => prev?.filter((a) => a.profile_id !== profileId) ?? prev)
+          }
+        />
+      ))}
+    </>
   );
 }

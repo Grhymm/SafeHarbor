@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
-import { useAdminSession } from "@/lib/useAdminSession";
+import { useAdminSessionContext } from "@/lib/AdminSessionContext";
 import { RedactionBars } from "@/components/RedactionBars";
-import { SiteHeader } from "@/components/SiteHeader";
 
 type Payout = {
   id: string;
@@ -114,13 +113,11 @@ function PayoutRow({
 }
 
 export default function AdminVersementsPage() {
-  const { session, state } = useAdminSession();
+  const session = useAdminSessionContext();
   const [payouts, setPayouts] = useState<Payout[] | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    if (state !== "ready") return;
-
     async function loadPayouts() {
       const { data, error } = await supabase
         .from("payouts")
@@ -139,69 +136,40 @@ export default function AdminVersementsPage() {
     }
 
     loadPayouts();
-  }, [state]);
-
-  if (state === "checking" || state === "unauthenticated") {
-    return (
-      <div className="bg-sh-bg min-h-screen">
-        <SiteHeader />
-      </div>
-    );
-  }
+  }, []);
 
   return (
-    <div className="bg-sh-bg text-sh-ink font-plex-sans min-h-screen">
-      <SiteHeader />
-      <div className="max-w-[720px] mx-auto px-5 pt-14 pb-24">
-        <RedactionBars />
-        <p className="font-plex-mono text-xs tracking-[0.14em] text-sh-amber uppercase mb-2.5">
-          Accès administrateur — versements
-        </p>
-        <h1 className="text-[28px] font-semibold mb-3.5 tracking-[-0.01em]">Versements en attente</h1>
+    <>
+      <RedactionBars />
+      <p className="font-plex-mono text-xs tracking-[0.14em] text-sh-amber uppercase mb-2.5">
+        Accès administrateur — versements
+      </p>
+      <h1 className="text-[28px] font-semibold mb-3.5 tracking-[-0.01em]">Versements en attente</h1>
 
-        {state === "forbidden" && (
-          <div className="bg-sh-panel border border-sh-error-ink rounded-[3px] p-7">
-            <p className="font-plex-mono text-xs tracking-[0.08em] uppercase text-sh-error-ink mb-3">
-              Accès réservé
-            </p>
-            <p className="text-sh-ink-dim text-sm">
-              Ce compte n&apos;a pas les droits administrateur nécessaires pour accéder à cette
-              zone.
-            </p>
-          </div>
-        )}
+      {errorMsg && (
+        <div className="bg-sh-error-bg text-sh-error-ink rounded-[3px] px-3.5 py-3 text-[13px] mb-5">
+          {errorMsg}
+        </div>
+      )}
 
-        {state === "ready" && (
-          <>
-            {errorMsg && (
-              <div className="bg-sh-error-bg text-sh-error-ink rounded-[3px] px-3.5 py-3 text-[13px] mb-5">
-                {errorMsg}
-              </div>
-            )}
+      {payouts === null && !errorMsg && (
+        <div className="text-sh-ink-dim text-sm">Chargement des versements…</div>
+      )}
 
-            {payouts === null && !errorMsg && (
-              <div className="text-sh-ink-dim text-sm">Chargement des versements…</div>
-            )}
+      {payouts !== null && payouts.length === 0 && (
+        <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-7 text-center text-sh-ink-dim text-sm">
+          Aucun versement en attente.
+        </div>
+      )}
 
-            {payouts !== null && payouts.length === 0 && (
-              <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-7 text-center text-sh-ink-dim text-sm">
-                Aucun versement en attente.
-              </div>
-            )}
-
-            {payouts?.map((payout) => (
-              <PayoutRow
-                key={payout.id}
-                payout={payout}
-                accessToken={session?.access_token ?? ""}
-                onPaid={(payoutId) =>
-                  setPayouts((prev) => prev?.filter((p) => p.id !== payoutId) ?? prev)
-                }
-              />
-            ))}
-          </>
-        )}
-      </div>
-    </div>
+      {payouts?.map((payout) => (
+        <PayoutRow
+          key={payout.id}
+          payout={payout}
+          accessToken={session?.access_token ?? ""}
+          onPaid={(payoutId) => setPayouts((prev) => prev?.filter((p) => p.id !== payoutId) ?? prev)}
+        />
+      ))}
+    </>
   );
 }

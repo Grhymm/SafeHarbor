@@ -4,9 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
-import { useAdminSession } from "@/lib/useAdminSession";
 import { RedactionBars } from "@/components/RedactionBars";
-import { SiteHeader } from "@/components/SiteHeader";
 import { StatusBadge, STATUS_MAP, type MissionStatus } from "@/components/StatusBadge";
 
 type MissionDetail = {
@@ -72,7 +70,6 @@ function formatDateTime(iso: string | null) {
 export default function AdminMissionDetailPage() {
   const params = useParams<{ id: string }>();
   const missionId = params.id;
-  const { state } = useAdminSession();
 
   const [mission, setMission] = useState<MissionDetail | null>(null);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
@@ -83,8 +80,6 @@ export default function AdminMissionDetailPage() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    if (state !== "ready") return;
-
     async function loadAll() {
       const [{ data: missionData, error: missionError }, { data: assignmentData }, { data: historyData }, { data: documentData }] =
         await Promise.all([
@@ -136,62 +131,35 @@ export default function AdminMissionDetailPage() {
     }
 
     loadAll();
-  }, [state, missionId]);
-
-  if (state === "checking" || state === "unauthenticated") {
-    return (
-      <div className="bg-sh-bg min-h-screen">
-        <SiteHeader />
-      </div>
-    );
-  }
+  }, [missionId]);
 
   return (
-    <div className="bg-sh-bg text-sh-ink font-plex-sans min-h-screen">
-      <SiteHeader />
-      <div className="max-w-[760px] mx-auto px-5 pt-14 pb-24">
-        <RedactionBars />
-        <Link
-          href="/admin/missions"
-          className="inline-block text-sh-ink-dim text-sm mb-6 hover:text-sh-ink"
-        >
-          ← Retour aux missions
-        </Link>
-        <p className="font-plex-mono text-xs tracking-[0.14em] text-sh-amber uppercase mb-2.5">
-          Accès administrateur — détail de mission
-        </p>
-        <h1 className="text-[28px] font-semibold mb-3.5 tracking-[-0.01em]">Détail de la mission</h1>
+    <>
+      <RedactionBars />
+      <Link href="/admin/missions" className="inline-block text-sh-ink-dim text-sm mb-6 hover:text-sh-ink">
+        ← Retour aux missions
+      </Link>
+      <p className="font-plex-mono text-xs tracking-[0.14em] text-sh-amber uppercase mb-2.5">
+        Accès administrateur — détail de mission
+      </p>
+      <h1 className="text-[28px] font-semibold mb-3.5 tracking-[-0.01em]">Détail de la mission</h1>
 
-        {state === "forbidden" && (
-          <div className="bg-sh-panel border border-sh-error-ink rounded-[3px] p-7">
-            <p className="font-plex-mono text-xs tracking-[0.08em] uppercase text-sh-error-ink mb-3">
-              Accès réservé
-            </p>
-            <p className="text-sh-ink-dim text-sm">
-              Ce compte n&apos;a pas les droits administrateur nécessaires pour accéder à cette
-              zone.
-            </p>
-          </div>
-        )}
+      {errorMsg && (
+        <div className="bg-sh-error-bg text-sh-error-ink rounded-[3px] px-3.5 py-3 text-[13px] mb-5">
+          {errorMsg}
+        </div>
+      )}
 
-        {state === "ready" && (
-          <>
-            {errorMsg && (
-              <div className="bg-sh-error-bg text-sh-error-ink rounded-[3px] px-3.5 py-3 text-[13px] mb-5">
-                {errorMsg}
-              </div>
-            )}
+      {!loaded && !errorMsg && <div className="text-sh-ink-dim text-sm">Chargement…</div>}
 
-            {!loaded && !errorMsg && <div className="text-sh-ink-dim text-sm">Chargement…</div>}
+      {loaded && !mission && !errorMsg && (
+        <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-7 text-center text-sh-ink-dim text-sm">
+          Mission introuvable.
+        </div>
+      )}
 
-            {loaded && !mission && !errorMsg && (
-              <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-7 text-center text-sh-ink-dim text-sm">
-                Mission introuvable.
-              </div>
-            )}
-
-            {mission && (
-              <>
+      {mission && (
+        <>
                 <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-7 mb-5">
                   <div className="flex justify-between items-start gap-4 mb-4">
                     <div className="text-lg font-semibold">{mission.package_name_snapshot}</div>
@@ -315,11 +283,8 @@ export default function AdminMissionDetailPage() {
                     </div>
                   ))}
                 </div>
-              </>
-            )}
-          </>
-        )}
-      </div>
-    </div>
+        </>
+      )}
+    </>
   );
 }

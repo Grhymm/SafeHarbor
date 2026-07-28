@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
-import { useAdminSession } from "@/lib/useAdminSession";
+import { useAdminSessionContext } from "@/lib/AdminSessionContext";
 import { RedactionBars } from "@/components/RedactionBars";
-import { SiteHeader } from "@/components/SiteHeader";
 import { StatusBadge, STATUS_MAP, type MissionStatus } from "@/components/StatusBadge";
 
 type Mission = {
@@ -434,14 +433,12 @@ function MissionRow({
 }
 
 export default function AdminMissionsPage() {
-  const { session, state } = useAdminSession();
+  const session = useAdminSessionContext();
   const [missions, setMissions] = useState<Mission[] | null>(null);
   const [filter, setFilter] = useState<MissionStatus | "all">("all");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    if (state !== "ready") return;
-
     async function loadMissions() {
       const { data, error } = await supabase
         .from("missions")
@@ -459,90 +456,63 @@ export default function AdminMissionsPage() {
     }
 
     loadMissions();
-  }, [state]);
-
-  if (state === "checking" || state === "unauthenticated") {
-    return (
-      <div className="bg-sh-bg min-h-screen">
-        <SiteHeader />
-      </div>
-    );
-  }
+  }, []);
 
   const filtered = missions?.filter((m) => filter === "all" || m.status === filter) ?? null;
 
   return (
-    <div className="bg-sh-bg text-sh-ink font-plex-sans min-h-screen">
-      <SiteHeader />
-      <div className="max-w-[760px] mx-auto px-5 pt-14 pb-24">
-        <RedactionBars />
-        <p className="font-plex-mono text-xs tracking-[0.14em] text-sh-amber uppercase mb-2.5">
-          Accès administrateur — missions
-        </p>
-        <h1 className="text-[28px] font-semibold mb-3.5 tracking-[-0.01em]">Missions</h1>
+    <>
+      <RedactionBars />
+      <p className="font-plex-mono text-xs tracking-[0.14em] text-sh-amber uppercase mb-2.5">
+        Accès administrateur — missions
+      </p>
+      <h1 className="text-[28px] font-semibold mb-3.5 tracking-[-0.01em]">Missions</h1>
 
-        {state === "forbidden" && (
-          <div className="bg-sh-panel border border-sh-error-ink rounded-[3px] p-7">
-            <p className="font-plex-mono text-xs tracking-[0.08em] uppercase text-sh-error-ink mb-3">
-              Accès réservé
-            </p>
-            <p className="text-sh-ink-dim text-sm">
-              Ce compte n&apos;a pas les droits administrateur nécessaires pour accéder à cette
-              zone.
-            </p>
-          </div>
-        )}
-
-        {state === "ready" && (
-          <>
-            <div className="mb-6">
-              <label className="block font-plex-mono text-[11px] tracking-[0.08em] uppercase text-sh-ink-dim mb-2">
-                Filtrer par statut
-              </label>
-              <select
-                value={filter}
-                onChange={(e) => setFilter(e.target.value as MissionStatus | "all")}
-                className="w-full max-w-[320px] bg-sh-panel border border-sh-panel-line rounded-[3px] px-3 py-2.5 text-[14px] text-sh-ink focus:outline-none focus:border-sh-amber"
-              >
-                {STATUS_FILTERS.map((status) => (
-                  <option key={status} value={status}>
-                    {status === "all" ? "Tous les statuts" : STATUS_MAP[status].label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {errorMsg && (
-              <div className="bg-sh-error-bg text-sh-error-ink rounded-[3px] px-3.5 py-3 text-[13px] mb-5">
-                {errorMsg}
-              </div>
-            )}
-
-            {filtered === null && !errorMsg && (
-              <div className="text-sh-ink-dim text-sm">Chargement des missions…</div>
-            )}
-
-            {filtered !== null && filtered.length === 0 && (
-              <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-7 text-center text-sh-ink-dim text-sm">
-                Aucune mission pour ce filtre.
-              </div>
-            )}
-
-            {filtered?.map((mission) => (
-              <MissionRow
-                key={mission.id}
-                mission={mission}
-                accessToken={session?.access_token ?? ""}
-                onUpdated={(missionId, newStatus) =>
-                  setMissions((prev) =>
-                    prev?.map((m) => (m.id === missionId ? { ...m, status: newStatus } : m)) ?? prev
-                  )
-                }
-              />
-            ))}
-          </>
-        )}
+      <div className="mb-6">
+        <label className="block font-plex-mono text-[11px] tracking-[0.08em] uppercase text-sh-ink-dim mb-2">
+          Filtrer par statut
+        </label>
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value as MissionStatus | "all")}
+          className="w-full max-w-[320px] bg-sh-panel border border-sh-panel-line rounded-[3px] px-3 py-2.5 text-[14px] text-sh-ink focus:outline-none focus:border-sh-amber"
+        >
+          {STATUS_FILTERS.map((status) => (
+            <option key={status} value={status}>
+              {status === "all" ? "Tous les statuts" : STATUS_MAP[status].label}
+            </option>
+          ))}
+        </select>
       </div>
-    </div>
+
+      {errorMsg && (
+        <div className="bg-sh-error-bg text-sh-error-ink rounded-[3px] px-3.5 py-3 text-[13px] mb-5">
+          {errorMsg}
+        </div>
+      )}
+
+      {filtered === null && !errorMsg && (
+        <div className="text-sh-ink-dim text-sm">Chargement des missions…</div>
+      )}
+
+      {filtered !== null && filtered.length === 0 && (
+        <div className="bg-sh-panel border border-sh-panel-line rounded-[3px] p-7 text-center text-sh-ink-dim text-sm">
+          Aucune mission pour ce filtre.
+        </div>
+      )}
+
+      {filtered?.map((mission) => (
+        <MissionRow
+          key={mission.id}
+          mission={mission}
+          accessToken={session?.access_token ?? ""}
+          onUpdated={(missionId, newStatus) =>
+            setMissions((prev) =>
+              prev?.map((m) => (m.id === missionId ? { ...m, status: newStatus } : m)) ?? prev
+            )
+          }
+        />
+      ))}
+    </>
   );
 }
