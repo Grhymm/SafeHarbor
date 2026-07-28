@@ -120,7 +120,11 @@ export default function AdminDashboardPage() {
                     value={data.pendingApplications}
                     href="/admin/candidatures"
                   />
-                  <StatTile label="Versements en attente" value={data.pendingPayouts} />
+                  <StatTile
+                    label="Versements en attente"
+                    value={data.pendingPayouts}
+                    href="/admin/versements"
+                  />
                 </div>
 
                 <p className="font-plex-mono text-[11px] tracking-[0.08em] uppercase text-sh-ink-dim mb-3">
