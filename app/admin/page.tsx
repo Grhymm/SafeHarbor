@@ -162,6 +162,18 @@ export default function AdminDashboardPage() {
                   >
                     Gérer les missions
                   </Link>
+                  <Link
+                    href="/admin/testeurs"
+                    className="inline-block font-plex-mono text-xs tracking-[0.06em] uppercase text-sh-amber border border-sh-amber rounded-[3px] px-4 py-2.5"
+                  >
+                    Vivier de testeurs
+                  </Link>
+                  <Link
+                    href="/admin/paiements"
+                    className="inline-block font-plex-mono text-xs tracking-[0.06em] uppercase text-sh-amber border border-sh-amber rounded-[3px] px-4 py-2.5"
+                  >
+                    Paiements reçus
+                  </Link>
                 </div>
               </>
             )}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
 import { useAdminSession } from "@/lib/useAdminSession";
 import { RedactionBars } from "@/components/RedactionBars";
@@ -381,6 +382,13 @@ function MissionRow({
         <span>{formatPrice(mission.price_cents_snapshot, mission.currency_snapshot)}</span>
         <span className="font-plex-mono text-xs">Commandée le {formatDate(mission.created_at)}</span>
       </div>
+
+      <Link
+        href={`/admin/missions/${mission.id}`}
+        className="inline-block font-plex-mono text-xs tracking-[0.06em] uppercase text-sh-ink-dim border border-sh-panel-line rounded-[3px] px-3 py-2 mr-3 mb-3"
+      >
+        Voir le détail
+      </Link>
 
       {mission.status === "paid" && (
         <button
