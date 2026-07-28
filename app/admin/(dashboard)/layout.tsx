@@ -6,6 +6,7 @@ import { LayoutDashboard, UserCheck, Briefcase, Users, CreditCard, Package } fro
 import { useAdminSession } from "@/lib/useAdminSession";
 import { AdminSessionContext } from "@/lib/AdminSessionContext";
 import { supabase } from "@/lib/supabase/client";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Tableau de bord", icon: LayoutDashboard },
@@ -85,9 +86,10 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
         </nav>
 
         <div className="px-5 py-5 border-t border-sh-panel-line">
-          <p className="font-plex-mono text-xs text-sh-ink-dim mb-3 break-all">
-            {session?.user.email}
-          </p>
+          <div className="flex items-center justify-between gap-2 mb-3">
+            <p className="font-plex-mono text-xs text-sh-ink-dim break-all">{session?.user.email}</p>
+            <ThemeToggle />
+          </div>
           <button
             onClick={handleLogout}
             className="w-full bg-transparent text-sh-ink-dim border border-sh-panel-line rounded-[3px] px-3.5 py-2 text-[13px] cursor-pointer font-plex-mono tracking-[0.02em] transition-colors duration-200 hover:text-sh-ink"
