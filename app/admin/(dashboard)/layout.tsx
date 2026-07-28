@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, UserCheck, Briefcase, Users, CreditCard } from "lucide-react";
+import { LayoutDashboard, UserCheck, Briefcase, Users, CreditCard, Package } from "lucide-react";
 import { useAdminSession } from "@/lib/useAdminSession";
 import { AdminSessionContext } from "@/lib/AdminSessionContext";
 import { supabase } from "@/lib/supabase/client";
@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { href: "/admin/missions", label: "Missions", icon: Briefcase },
   { href: "/admin/testeurs", label: "Testeurs", icon: Users },
   { href: "/admin/paiements", label: "Paiements", icon: CreditCard },
+  { href: "/admin/catalogue", label: "Catalogue", icon: Package },
 ];
 
 export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
