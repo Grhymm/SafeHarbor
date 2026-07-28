@@ -5,7 +5,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
 import { useAdminSessionContext } from "@/lib/AdminSessionContext";
 import { RedactionBars } from "@/components/RedactionBars";
-import { StatusBadge, STATUS_MAP, type MissionStatus } from "@/components/StatusBadge";
+import { StatusBadge, type MissionStatus } from "@/components/StatusBadge";
 
 type Mission = {
   id: string;
@@ -36,6 +36,28 @@ type ReportRow = {
 };
 
 type Msg = { type: "error" | "ok"; text: string } | null;
+
+// Libellés propres à ce filtre admin, distincts de STATUS_MAP : ce dernier
+// regroupe volontairement plusieurs statuts sous un même libellé simplifié
+// pour l'affichage client (ex. tester_assigned/contracts_signed/in_progress
+// tous affichés "Test en cours") — mais un filtre admin a besoin de
+// distinguer chaque statut technique précisément, sinon le menu affiche des
+// entrées visuellement identiques bien que leurs valeurs diffèrent.
+const ADMIN_STATUS_LABELS: Record<MissionStatus, string> = {
+  draft: "Brouillon",
+  paid: "Payée — en attente d'assignation",
+  tester_assigned: "Testeur assigné",
+  contracts_signed: "Contrats signés",
+  in_progress: "Test en cours",
+  report_submitted: "Rapport soumis",
+  under_review: "En relecture admin",
+  delivered: "Livrée au client",
+  validated: "Validée par le client",
+  disputed: "Litige en cours",
+  refunded: "Remboursée",
+  closed: "Clôturée",
+  cancelled: "Annulée",
+};
 
 const STATUS_FILTERS: (MissionStatus | "all")[] = [
   "all",
@@ -479,7 +501,7 @@ export default function AdminMissionsPage() {
         >
           {STATUS_FILTERS.map((status) => (
             <option key={status} value={status}>
-              {status === "all" ? "Tous les statuts" : STATUS_MAP[status].label}
+              {status === "all" ? "Tous les statuts" : ADMIN_STATUS_LABELS[status]}
             </option>
           ))}
         </select>
