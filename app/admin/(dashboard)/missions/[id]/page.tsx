@@ -92,7 +92,7 @@ export default function AdminMissionDetailPage() {
             .maybeSingle(),
           supabase
             .from("mission_assignments")
-            .select("testeur_id, assigned_at, profiles(full_name)")
+            .select("testeur_id, assigned_at, profiles!mission_assignments_testeur_id_fkey(full_name)")
             .eq("mission_id", missionId),
           supabase
             .from("mission_status_history")
