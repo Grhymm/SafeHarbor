@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import posthog from "posthog-js";
 import { supabase } from "@/lib/supabase/client";
 import { useAdminSessionContext } from "@/lib/AdminSessionContext";
 import { RedactionBars } from "@/components/RedactionBars";
@@ -65,6 +66,10 @@ function PayoutRow({
         return;
       }
 
+      posthog.capture("payout_marked_paid", {
+        amount_cents: payout.amount_cents,
+        currency: payout.missions?.currency_snapshot || "EUR",
+      });
       onPaid(payout.id);
     } catch (err) {
       setMsg({ type: "error", text: `Erreur réseau : ${err instanceof Error ? err.message : String(err)}` });

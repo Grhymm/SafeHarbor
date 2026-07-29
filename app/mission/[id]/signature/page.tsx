@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import posthog from "posthog-js";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase/client";
 import { RedactionBars } from "@/components/RedactionBars";
@@ -158,6 +159,10 @@ export default function MissionSignaturePage() {
         return;
       }
 
+      posthog.capture("test_authorization_signed", {
+        signer_role: mission?.client_id === session.user.id ? "client" : "testeur",
+        signature_status: (result as SignResult).status,
+      });
       setSignResult(result as SignResult);
       setAlreadySignedByMe(true);
     } catch (err) {

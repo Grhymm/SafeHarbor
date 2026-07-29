@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import posthog from "posthog-js";
 import { useAdminSessionContext } from "@/lib/AdminSessionContext";
 import { RedactionBars } from "@/components/RedactionBars";
 
@@ -55,6 +56,11 @@ function ApplicationCard({
         return;
       }
 
+      posthog.capture("tester_application_reviewed", {
+        decision,
+        specialties: application.specialties ?? [],
+        certifications: application.certifications ?? [],
+      });
       onResolved(application.profile_id);
     } catch (err) {
       setMsg({ type: "error", text: `Erreur réseau : ${err instanceof Error ? err.message : String(err)}` });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import posthog from "posthog-js";
 import { useAdminSessionContext } from "@/lib/AdminSessionContext";
 import { RedactionBars } from "@/components/RedactionBars";
 
@@ -60,6 +61,9 @@ function TesteurCard({
         return;
       }
 
+      posthog.capture("tester_availability_changed", {
+        active: nextActive,
+      });
       onToggled(testeur.profile_id, nextActive);
     } catch (err) {
       setMsg({ type: "error", text: `Erreur réseau : ${err instanceof Error ? err.message : String(err)}` });

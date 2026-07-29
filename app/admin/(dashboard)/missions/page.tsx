@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import posthog from "posthog-js";
 import { supabase } from "@/lib/supabase/client";
 import { useAdminSessionContext } from "@/lib/AdminSessionContext";
 import { RedactionBars } from "@/components/RedactionBars";
@@ -156,6 +157,10 @@ function AssignPanel({
         return;
       }
 
+      posthog.capture("tester_assigned_to_mission", {
+        package_code: mission.package_code_snapshot,
+        assigned_tester_count: selected.size,
+      });
       onAssigned();
     } catch (err) {
       setMsg({ type: "error", text: `Erreur réseau : ${err instanceof Error ? err.message : String(err)}` });
@@ -299,6 +304,13 @@ function ReportPanel({
         return;
       }
 
+      posthog.capture("report_delivered", {
+        package_code: mission.package_code_snapshot,
+        critical_count: report.critical_count,
+        high_count: report.high_count,
+        medium_count: report.medium_count,
+        low_count: report.low_count,
+      });
       onDelivered();
     } catch (err) {
       setMsg({ type: "error", text: `Erreur réseau : ${err instanceof Error ? err.message : String(err)}` });

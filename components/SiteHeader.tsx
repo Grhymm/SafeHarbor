@@ -3,11 +3,18 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import type { Session } from "@supabase/supabase-js";
+import type { Session, User } from "@supabase/supabase-js";
+import posthog from "posthog-js";
 import { supabase } from "@/lib/supabase/client";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 type Role = "client" | "testeur" | "admin" | null;
+
+function identifyUser(user: User) {
+  posthog.identify(user.id, {
+    email: user.email,
+  });
+}
 
 export function SiteHeader() {
   const router = useRouter();
@@ -25,15 +32,22 @@ export function SiteHeader() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!active) return;
       setSession(session);
-      if (session) loadRole(session.user.id);
+      if (session) {
+        identifyUser(session.user);
+        loadRole(session.user.id);
+      }
     });
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       if (!active) return;
       setSession(session);
-      if (session) {
+      if (event === "SIGNED_OUT") {
+        posthog.reset();
+        setRole(null);
+      } else if (session) {
+        identifyUser(session.user);
         loadRole(session.user.id);
       } else {
         setRole(null);

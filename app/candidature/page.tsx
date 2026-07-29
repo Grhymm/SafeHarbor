@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import posthog from "posthog-js";
 import { supabase } from "@/lib/supabase/client";
 import { RedactionBars } from "@/components/RedactionBars";
 
@@ -120,6 +121,11 @@ export default function CandidaturePage() {
         return;
       }
 
+      posthog.capture("tester_application_submitted", {
+        specialties,
+        certifications,
+        legal_status_provided: Boolean(legalStatus),
+      });
       setProfileId(result.profile_id ?? null);
       setSubmitted(true);
     } catch (err) {

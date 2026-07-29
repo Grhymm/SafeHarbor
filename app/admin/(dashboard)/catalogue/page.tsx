@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import posthog from "posthog-js";
 import { supabase } from "@/lib/supabase/client";
 import { useAdminSessionContext } from "@/lib/AdminSessionContext";
 import { RedactionBars } from "@/components/RedactionBars";
@@ -137,6 +138,10 @@ function EditForm({
         return;
       }
 
+      posthog.capture("package_updated", {
+        package_code: pkg.code,
+        updated_field_count: Object.keys(updates).length,
+      });
       onSaved(result.package as Package);
     } catch (err) {
       setMsg({ type: "error", text: `Erreur réseau : ${err instanceof Error ? err.message : String(err)}` });

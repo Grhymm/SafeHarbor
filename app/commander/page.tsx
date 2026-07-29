@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
+import posthog from "posthog-js";
 import type { Session } from "@supabase/supabase-js";
 import { initializePaddle, type Paddle, type Environments } from "@paddle/paddle-js";
 import { supabase } from "@/lib/supabase/client";
@@ -228,6 +229,10 @@ export default function CommanderPage() {
         return;
       }
 
+      posthog.capture("checkout_started", {
+        package_code: packageCode,
+        environment,
+      });
       paddleRef.current?.Checkout.open({ transactionId: result.transaction_id });
     } catch (err) {
       setOrderMsg({

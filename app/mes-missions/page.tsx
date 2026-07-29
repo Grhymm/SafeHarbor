@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import posthog from "posthog-js";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase/client";
 import { useProtectedSession } from "@/lib/useProtectedSession";
@@ -138,6 +139,9 @@ function MissionCard({
         return;
       }
 
+      posthog.capture("report_validated", {
+        mission_status: mission.status,
+      });
       setValidateMessage(result.message || "Rapport validé.");
       onValidated(mission.id);
     } catch (err) {

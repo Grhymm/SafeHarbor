@@ -2,10 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Session } from "@supabase/supabase-js";
+import type { Session, User } from "@supabase/supabase-js";
+import posthog from "posthog-js";
 import { supabase } from "@/lib/supabase/client";
 
 export type AdminSessionState = "checking" | "unauthenticated" | "forbidden" | "ready";
+
+function identifyUser(user: User) {
+  posthog.identify(user.id, {
+    email: user.email,
+  });
+}
 
 export function useAdminSession() {
   const router = useRouter();
@@ -36,6 +43,7 @@ export function useAdminSession() {
         return;
       }
 
+      identifyUser(current.user);
       setSession(current);
       setState("ready");
     }
@@ -44,7 +52,12 @@ export function useAdminSession() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => check(session));
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT") {
+        posthog.reset();
+      }
+      check(session);
+    });
 
     return () => {
       active = false;

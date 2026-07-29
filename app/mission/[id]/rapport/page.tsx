@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import posthog from "posthog-js";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase/client";
 import { RedactionBars } from "@/components/RedactionBars";
@@ -163,6 +164,13 @@ export default function MissionRapportPage() {
         return;
       }
 
+      posthog.capture("report_submitted", {
+        report_updated: hadExistingReport,
+        critical_count: criticalCount,
+        high_count: highCount,
+        medium_count: mediumCount,
+        low_count: lowCount,
+      });
       setHadExistingReport(true);
       setMsg({ type: "ok", text: result.message });
     } catch (err) {
